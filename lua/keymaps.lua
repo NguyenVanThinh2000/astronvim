@@ -59,3 +59,5 @@ keymap.set("v", "<S-h>", "^", opts)
 keymap.set("v", "p", '"_dP', opts)
 keymap.set("n", "dd", '"_dd', opts)
 keymap.set("n", "<leader>q", ":q!<cr>", opts)
+
+return {}

@@ -73,6 +73,25 @@ return {
           desc = "Close buffer from tabline",
         },
 
+        -- telescope mappings
+        ["<C-f>"] = {
+          function()
+            require("telescope.builtin").live_grep {
+              additional_args = function() return { "--hidden", "--no-ignore" } end,
+            }
+          end,
+          desc = "Find words in all files",
+        },
+        ["<C-p>"] = {
+          function()
+            require("telescope.builtin").find_files {
+              hidden = true,
+              no_ignore = true,
+            }
+          end,
+          desc = "Find all files",
+        },
+
         -- tables with just a `desc` key will be registered with which-key if it's installed
         -- this is useful for naming menus
         -- ["<Leader>b"] = { desc = "Buffers" },

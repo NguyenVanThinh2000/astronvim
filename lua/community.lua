@@ -6,5 +6,6 @@
 return {
   "AstroNvim/astrocommunity",
   { import = "astrocommunity.pack.lua" },
+  { import = "astrocommunity.fuzzy-finder.telescope-nvim" },
   -- import/override with your plugins folder
 }
