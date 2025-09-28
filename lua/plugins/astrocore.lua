@@ -77,7 +77,7 @@ return {
         ["<C-f>"] = {
           function()
             require("telescope.builtin").live_grep {
-              additional_args = function() return { "--hidden", "--no-ignore" } end,
+              additional_args = function() return { "--hidden", "--no-ignore", "--fixed-strings" } end,
             }
           end,
           desc = "Find words in all files",
@@ -87,6 +87,21 @@ return {
             require("telescope.builtin").find_files {
               hidden = true,
               no_ignore = true,
+              find_command = {
+                "rg",
+                "--files",
+                "--hidden",
+                "--no-ignore",
+                "--glob=!**/.git/*",
+                "--glob=!**/.idea/*",
+                "--glob=!**/.vscode/*",
+                "--glob=!**/build/*",
+                "--glob=!**/dist/*",
+                "--glob=!**/yarn.lock",
+                "--glob=!**/package-lock.json",
+                "--glob=!**/bun.lockb",
+                "--glob=!**/node_modules/*",
+              },
             }
           end,
           desc = "Find all files",

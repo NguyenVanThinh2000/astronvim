@@ -25,4 +25,6 @@ end
 
 require "lazy_setup"
 require "polish"
--- require "keymaps"
+
+vim.keymap.set("n", "<leader>e", ":Neotree focus<cr>")
+vim.keymap.set("n", "<C-b>", ":Neotree toggle<cr>")
