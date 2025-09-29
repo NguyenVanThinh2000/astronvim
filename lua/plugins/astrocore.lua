@@ -45,7 +45,7 @@ return {
         wrap = false, -- sets vim.opt.wrap
       },
       g = { -- vim.g.<key>
-        -- configure global vim variables (vim.g)
+        -- configure global vim variables vim.g
         -- NOTE: `mapleader` and `maplocalleader` must be set in the AstroNvim opts or before `lazy.setup`
         -- This can be found in the `lua/lazy_setup.lua` file
       },
@@ -57,11 +57,21 @@ return {
       n = {
         -- second key is the lefthand side of the map
 
-        -- navigate buffer tabs
+        -- buffer tabs
         ["<Tab>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
         ["<S-Tab>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
         ["to"] = { function() require("astrocore.buffer").close_all(true) end, desc = "Previous buffer" },
         ["<C-w>"] = { function() require("astrocore.buffer").close() end, desc = "Previous buffer" },
+        ["<A-1>"] = { function() require("astrocore.buffer").nav_to(1) end },
+        ["<A-2>"] = { function() require("astrocore.buffer").nav_to(2) end },
+        ["<A-3>"] = { function() require("astrocore.buffer").nav_to(3) end },
+        ["<A-4>"] = { function() require("astrocore.buffer").nav_to(4) end },
+        ["<A-5>"] = { function() require("astrocore.buffer").nav_to(5) end },
+        ["<A-6>"] = { function() require("astrocore.buffer").nav_to(6) end },
+        ["<A-7>"] = { function() require("astrocore.buffer").nav_to(7) end },
+        ["<A-8>"] = { function() require("astrocore.buffer").nav_to(8) end },
+        ["<A-9>"] = { function() require("astrocore.buffer").nav_to(9) end },
+        ["<A-0>"] = { function() require("astrocore.buffer").nav_to(0) end },
 
         -- mappings seen under group name "Buffer"
         ["<Leader>bd"] = {
