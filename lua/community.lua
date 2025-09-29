@@ -7,5 +7,8 @@ return {
   "AstroNvim/astrocommunity",
   { import = "astrocommunity.pack.lua" },
   { import = "astrocommunity.fuzzy-finder.telescope-nvim" },
-  -- import/override with your plugins folder
+  { import = "astrocommunity.motion.nvim-surround" },
+  { import = "astrocommunity.editing-support.copilotchat-nvim" },
+  { import = "astrocommunity.pack.tailwindcss" },
+  { import = "astrocommunity.color.vim-highlighter" },
 }

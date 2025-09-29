@@ -6,13 +6,20 @@ local opts = { noremap = true, silent = true }
 keymap.set("n", "gk", "<Cmd>lua vim.lsp.buf.hover()<cr>")
 keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
 
+-- terminal
+keymap.set({ "n", "t" }, "<C-j>", "<Cmd>ToggleTerm<CR>", opts)
+keymap.set({ "i" }, "<C-j>", "<Esc><Cmd>ToggleTerm<CR>", opts)
+
+-- neotree
 keymap.set("n", "<leader>e", ":Neotree focus<cr>", opts)
 keymap.set("n", "<C-b>", ":Neotree toggle<cr>", opts)
 
+-- Key mappings for word-based actions: delete, select, and yank inner word
 keymap.set("i", "jk", "<esc>")
 keymap.set("n", "di", "diwi")
 keymap.set("n", "dw", "diw")
-keymap.set("n", "sw", "viwy")
+keymap.set("n", "sw", "viw")
+keymap.set("n", "yw", "viwy")
 
 -- clear search highlights
 keymap.set("n", "<leader>hh", ":nohl<CR>", opts)
@@ -56,9 +63,15 @@ keymap.set("v", "<S-l>", "$h", opts)
 keymap.set("n", "<S-h>", "^", opts)
 keymap.set("v", "<S-h>", "^", opts)
 
+-- paste over currently selected text without yanking it
 keymap.set("v", "p", '"_dP', opts)
 keymap.set("n", "dd", '"_dd', opts)
+
+-- quit
 keymap.set("n", "<leader>q", ":q!<cr>", opts)
+
+-- select all
+keymap.set("n", "<C-a>", "gg<S-v>G", opts)
 
 ---@type LazySpec
 return {}
