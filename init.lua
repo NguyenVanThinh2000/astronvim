@@ -26,5 +26,8 @@ end
 require "lazy_setup"
 require "polish"
 
-vim.keymap.set("n", "<leader>e", ":Neotree focus<cr>")
-vim.keymap.set("n", "<C-b>", ":Neotree toggle<cr>")
+if not vim.g.vscode then
+  vim.keymap.set("n", "<leader>e", ":Neotree focus<cr>")
+  vim.keymap.set("n", "<C-b>", ":Neotree toggle<cr>")
+  require("lspconfig").mlua_ls.setup {}
+end

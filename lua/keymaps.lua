@@ -10,9 +10,9 @@ keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
 keymap.set({ "n", "t" }, "<C-j>", "<Cmd>ToggleTerm<CR>", opts)
 keymap.set({ "i" }, "<C-j>", "<Esc><Cmd>ToggleTerm<CR>", opts)
 
--- neotree
-keymap.set("n", "<leader>e", ":Neotree focus<cr>", opts)
-keymap.set("n", "<C-b>", ":Neotree toggle<cr>", opts)
+-- -- neotree
+-- keymap.set("n", "<leader>e", ":Neotree focus<cr>", opts)
+-- keymap.set("n", "<C-b>", ":Neotree toggle<cr>", opts)
 
 -- Key mappings for word-based actions: delete, select, and yank inner word
 keymap.set("i", "jk", "<esc>")

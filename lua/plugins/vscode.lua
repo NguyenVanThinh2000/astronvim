@@ -10,28 +10,28 @@ vim.tbl_map(function(plugin) enabled[plugin] = true end, {
   "AstroNvim",
   "astrocore",
   "astroui",
-  "Comment.nvim",
+  -- "Comment.nvim",
   "nvim-autopairs",
   "nvim-treesitter",
   "nvim-ts-autotag",
   "nvim-treesitter-textobjects",
   "nvim-ts-context-commentstring",
   -- more known working
-  "dial.nvim",
-  "flash.nvim",
-  "flit.nvim",
+  -- "dial.nvim",
+  -- "flash.nvim",
+  -- "flit.nvim",
   "leap.nvim",
-  "mini.ai",
-  "mini.comment",
-  "mini.move",
-  "mini.pairs",
-  "mini.surround",
+  -- "mini.ai",
+  -- "mini.comment",
+  -- "mini.move",
+  -- "mini.pairs",
+  -- "mini.surround",
   "nvim-surround",
-  "ts-comments.nvim",
-  "vim-easy-align",
-  "vim-repeat",
-  "vim-sandwich",
-  "yanky.nvim",
+  -- "ts-comments.nvim",
+  -- "vim-easy-align",
+  -- "vim-repeat",
+  -- "vim-sandwich",
+  -- "yanky.nvim",
   -- feel free to open PRs to add more support!
 })
 
@@ -72,11 +72,11 @@ return {
       maps.n["<C-'>"] = function() require("vscode").action "workbench.action.terminal.toggleTerminal" end
 
       -- buffer management
-      maps.n["]b"] = "<Cmd>Tabnext<CR>"
-      maps.n["[b"] = "<Cmd>Tabprevious<CR>"
+      maps.n["<Tab>"] = "<Cmd>Tabnext<CR>"
+      maps.n["<S-Tab>"] = "<Cmd>Tabprevious<CR>"
       maps.n["<Leader>c"] = "<Cmd>Tabclose<CR>"
       maps.n["<Leader>C"] = "<Cmd>Tabclose!<CR>"
-      maps.n["<Leader>bc"] = function() require("vscode").action "workbench.action.closeOtherEditors" end
+      maps.n["to"] = function() require("vscode").action "workbench.action.closeOtherEditors" end
       maps.n["<Leader>bp"] = "<Cmd>Tablast<CR>"
 
       -- file explorer
@@ -84,12 +84,14 @@ return {
       maps.n["<Leader>o"] = function() require("vscode").action "workbench.files.action.focusFilesExplorer" end
 
       -- indentation
-      maps.v["<Tab>"] = function() require("vscode").action "editor.action.indentLines" end
-      maps.v["<S-Tab>"] = function() require("vscode").action "editor.action.outdentLines" end
+      maps.v[">"] = function() require("vscode").action "editor.action.indentLines" end
+      maps.v["<"] = function() require("vscode").action "editor.action.outdentLines" end
+      maps.n[">"] = function() require("vscode").action "editor.action.indentLines" end
+      maps.n["<"] = function() require("vscode").action "editor.action.outdentLines" end
 
       -- diagnostics
-      maps.n["]d"] = function() require("vscode").action "editor.action.marker.nextInFiles" end
-      maps.n["[d"] = function() require("vscode").action "editor.action.marker.prevInFiles" end
+      maps.n["]d"] = function() require("vscode").action "editor.action.marker.next" end
+      maps.n["[d"] = function() require("vscode").action "editor.action.marker.prev" end
 
       -- pickers (emulate telescope mappings)
       maps.n["<Leader>fc"] = function()
@@ -106,9 +108,9 @@ return {
       maps.n["<Leader>gg"] = function() require("vscode").action "workbench.view.scm" end
 
       -- LSP Mappings
-      maps.n["K"] = function() require("vscode").action "editor.action.showHover" end
+      maps.n["gk"] = function() require("vscode").action "editor.action.showHover" end
       maps.n["gI"] = function() require("vscode").action "editor.action.goToImplementation" end
-      maps.n["gd"] = function() require("vscode").action "editor.action.revealDefinition" end
+      maps.n["<C-]>"] = function() require("vscode").action "editor.action.revealDefinition" end
       maps.n["gD"] = function() require("vscode").action "editor.action.revealDeclaration" end
       maps.n["gr"] = function() require("vscode").action "editor.action.goToReferences" end
       maps.n["gy"] = function() require("vscode").action "editor.action.goToTypeDefinition" end
