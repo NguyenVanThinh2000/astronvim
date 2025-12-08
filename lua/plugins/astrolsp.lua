@@ -88,6 +88,75 @@ return {
           desc = "Declaration of current symbol",
           cond = "textDocument/declaration",
         },
+        ["<Leader>ca"] = {
+          function() vim.lsp.buf.code_action() end,
+          desc = "LSP code action",
+          cond = "textDocument/codeAction",
+        },
+        ["<Leader>ri"] = {
+          function()
+            local ok, vtsls = pcall(require, "vtsls")
+            if ok and vtsls.commands then
+              vtsls.commands.remove_unused_imports(
+                0,
+                function() vim.notify("Removed unused imports", vim.log.levels.INFO) end,
+                function(err) vim.notify("Error: " .. tostring(err), vim.log.levels.ERROR) end
+              )
+            else
+              vim.notify("vtsls plugin not loaded", vim.log.levels.WARN)
+            end
+          end,
+          desc = "Remove unused imports (vtsls)",
+          cond = function(client) return client.name == "vtsls" end,
+        },
+        ["<Leader>oi"] = {
+          function()
+            local ok, vtsls = pcall(require, "vtsls")
+            if ok and vtsls.commands then
+              vtsls.commands.organize_imports(
+                0,
+                function() vim.notify("Organized imports", vim.log.levels.INFO) end,
+                function(err) vim.notify("Error: " .. tostring(err), vim.log.levels.ERROR) end
+              )
+            else
+              vim.notify("vtsls plugin not loaded", vim.log.levels.WARN)
+            end
+          end,
+          desc = "Organize imports (vtsls)",
+          cond = function(client) return client.name == "vtsls" end,
+        },
+        ["<Leader>ru"] = {
+          function()
+            local ok, vtsls = pcall(require, "vtsls")
+            if ok and vtsls.commands then
+              vtsls.commands.remove_unused(
+                0,
+                function() vim.notify("Remove unused", vim.log.levels.INFO) end,
+                function(err) vim.notify("Error: " .. tostring(err), vim.log.levels.ERROR) end
+              )
+            else
+              vim.notify("vtsls plugin not loaded", vim.log.levels.WARN)
+            end
+          end,
+          desc = "Remove unused (vtsls)",
+          cond = function(client) return client.name == "vtsls" end,
+        },
+        ["<Leader>ai"] = {
+          function()
+            local ok, vtsls = pcall(require, "vtsls")
+            if ok and vtsls.commands then
+              vtsls.commands.add_missing_imports(
+                0,
+                function() vim.notify("Add missing imports", vim.log.levels.INFO) end,
+                function(err) vim.notify("Error: " .. tostring(err), vim.log.levels.ERROR) end
+              )
+            else
+              vim.notify("vtsls plugin not loaded", vim.log.levels.WARN)
+            end
+          end,
+          desc = "Remove unused (vtsls)",
+          cond = function(client) return client.name == "vtsls" end,
+        },
         ["<Leader>uY"] = {
           function() require("astrolsp.toggles").buffer_semantic_tokens() end,
           desc = "Toggle LSP semantic highlight (buffer)",

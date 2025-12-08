@@ -7,8 +7,8 @@ keymap.set("n", "gk", "<Cmd>lua vim.lsp.buf.hover()<cr>")
 keymap.set("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
 
 -- terminal
-keymap.set({ "n", "t" }, "<C-j>", "<Cmd>ToggleTerm<CR>", opts)
-keymap.set({ "i" }, "<C-j>", "<Esc><Cmd>ToggleTerm<CR>", opts)
+-- keymap.set({ "n", "t" }, "<C-j>", "<Cmd>ToggleTerm<CR>", opts)
+-- keymap.set({ "i" }, "<C-j>", "<Esc><Cmd>ToggleTerm<CR>", opts)
 
 -- -- neotree
 -- keymap.set("n", "<leader>e", ":Neotree focus<cr>", opts)

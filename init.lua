@@ -25,6 +25,8 @@ end
 
 require "lazy_setup"
 require "polish"
+local keymap = vim.keymap
+keymap.set("n", "n", "n", { nowait = true })
 
 if not vim.g.vscode then
   vim.keymap.set("n", "<leader>e", ":Neotree focus<cr>")
