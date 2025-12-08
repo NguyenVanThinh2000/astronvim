@@ -140,6 +140,32 @@ vtsls = {
 | `gk` | Hover documentation | Xem documentation |
 | `<leader>rn` | Rename symbol | Đổi tên biến/hàm |
 
+#### Smart Go to Definition - `<C-]>`
+
+Feature đặc biệt: Keybinding `<C-]>` kết hợp 2 chức năng:
+
+1. **Lần đầu tiên**: Đi đến definition của symbol
+2. **Nếu đã ở definition**: Hiển thị tất cả file references (nơi sử dụng symbol)
+
+**Ví dụ sử dụng:**
+```typescript
+// File: userService.ts
+function getUserById(id: string) {  // <- Đây là definition
+  return db.query({ id });
+}
+
+// File: app.ts
+const user = getUserById("123");    // <- Sử dụng (reference)
+const name = getUserById("456");    // <- Sử dụng (reference)
+
+// Workflow:
+// 1. Đứng ở "getUserById" trong app.ts, bấm C-]
+//    -> Nhảy tới definition trong userService.ts
+//
+// 2. Đứng ở "getUserById" trong userService.ts, bấm C-]
+//    -> Hiển thị file references (app.ts có 2 references)
+```
+
 #### Cách sử dụng
 
 1. **Kiểm tra vtsls đã attach:**
@@ -248,14 +274,15 @@ nvim app.ts
 
 ### Keybindings cheat sheet
 ```
+<C-]>       - Go to definition → File references (smart toggle)
 <space>ca   - Code action (tất cả LSP)
-<space>roi  - Remove unused imports (vtsls)
-<space>roa  - Organize imports (vtsls)
-<space>ru   - Remove unused imports (alias)
+<space>ri   - Remove unused imports (vtsls)
+<space>oi   - Organize imports (vtsls)
+<space>ru   - Remove unused code (vtsls)
+<space>ai   - Add missing imports (vtsls)
 gk          - Hover documentation
 <space>rn   - Rename symbol
 gl          - Show diagnostics
-<C-]>       - Go to declaration
 ```
 
 ---

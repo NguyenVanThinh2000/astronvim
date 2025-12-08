@@ -82,11 +82,37 @@ return {
           function() vim.diagnostic.open_float() end,
           desc = "Hover diagnostics",
         },
-        -- a `cond` key can provided as the string of a server capability to be required to attach, or a function with `client` and `bufnr` parameters from the `on_attach` that returns a boolean
         ["<C-]>"] = {
-          function() vim.lsp.buf.declaration() end,
-          desc = "Declaration of current symbol",
-          cond = "textDocument/declaration",
+          function()
+            local params = vim.lsp.util.make_position_params(nil, "utf-8")
+            vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result, _, _)
+              if err then return end
+              if not result or vim.tbl_isempty(result) then
+                -- No definition found
+                vim.notify("No definition found", vim.log.levels.INFO)
+                vim.lsp.buf.references(nil, {})
+                return
+              end
+
+              -- Get current position
+              local current_file = vim.fn.expand "%:p"
+              local current_line = vim.fn.line "."
+              -- Get definition position
+              local def = result[1]
+              local def_file = vim.uri_to_fname(def.targetUri)
+              local def_line = def.targetSelectionRange.start.line + 1
+
+              if current_file == def_file and current_line == def_line then
+                -- At definition, show references
+                vim.lsp.buf.references(nil, {})
+              else
+                -- Not at definition, go to definition
+                vim.lsp.buf.definition()
+              end
+            end)
+          end,
+          desc = "Go to definition or show references if at definition",
+          cond = "textDocument/definition",
         },
         ["<Leader>ca"] = {
           function() vim.lsp.buf.code_action() end,
