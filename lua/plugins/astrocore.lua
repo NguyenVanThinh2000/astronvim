@@ -61,7 +61,7 @@ return {
         ["<Tab>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
         ["<S-Tab>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
         ["to"] = { function() require("astrocore.buffer").close_all(true) end, desc = "Previous buffer" },
-        ["<C-w>"] = { function() require("astrocore.buffer").close() end, desc = "Previous buffer" },
+        -- ["<C-w>"] = { function() require("astrocore.buffer").close(nil, true) end, desc = "Close buffer" },
         ["<A-1>"] = { function() require("astrocore.buffer").nav_to(1) end },
         ["<A-2>"] = { function() require("astrocore.buffer").nav_to(2) end },
         ["<A-3>"] = { function() require("astrocore.buffer").nav_to(3) end },
@@ -87,7 +87,24 @@ return {
         ["<C-f>"] = {
           function()
             require("telescope.builtin").live_grep {
-              additional_args = function() return { "--hidden", "--no-ignore", "--fixed-strings" } end,
+              -- ignore node modules file
+              additional_args = function()
+                return {
+                  "--hidden",
+                  "--no-ignore",
+                  "--fixed-strings",
+                  "--glob=!**/.git/*",
+                  "--glob=!**/.idea/*",
+                  "--glob=!**/.vscode/*",
+                  "--glob=!**/build/*",
+                  "--glob=!**/dist/*",
+                  "--glob=!**/yarn.lock",
+                  "--glob=!**/bun.lock",
+                  "--glob=!**/package-lock.json",
+                  "--glob=!**/bun.lockb",
+                  "--glob=!**/node_modules/*",
+                }
+              end,
             }
           end,
           desc = "Find words in all files",
@@ -110,6 +127,7 @@ return {
                 "--glob=!**/yarn.lock",
                 "--glob=!**/package-lock.json",
                 "--glob=!**/bun.lockb",
+                "--glob=!**/bun.lock",
                 "--glob=!**/node_modules/*",
               },
             }

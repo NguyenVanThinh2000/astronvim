@@ -31,5 +31,4 @@ keymap.set("n", "n", "n", { nowait = true })
 if not vim.g.vscode then
   vim.keymap.set("n", "<leader>e", ":Neotree focus<cr>")
   vim.keymap.set("n", "<C-b>", ":Neotree toggle<cr>")
-  require("lspconfig").mlua_ls.setup {}
 end

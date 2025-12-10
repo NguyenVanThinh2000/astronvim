@@ -1,5 +1,5 @@
 local keymap = vim.keymap
-local opts = { noremap = true, silent = true }
+local opts = { noremap = true, silent = true, nowait = true }
 -- local opt_remap = { remap = true }
 
 -- show hover documentation
@@ -72,6 +72,19 @@ keymap.set("n", "<leader>q", ":q!<cr>", opts)
 
 -- select all
 keymap.set("n", "<C-a>", "gg<S-v>G", opts)
+
+-- resize buffers
+keymap.set("n", "<C-A-Left>", ":vertical SmartResizeLeft<CR>", opts)
+keymap.set("n", "<C-A-Right>", ":vertical SmartResizeRight<CR>", opts)
+keymap.set("n", "<C-A-Up>", ":vertical SmartResizeUp<CR>", opts)
+keymap.set("n", "<C-A-Down>", ":vertical SmartResizeDown<CR>", opts)
+
+keymap.set(
+  "n",
+  "<C-w>",
+  function() require("astrocore.buffer").close(nil, true) end,
+  { desc = "Close buffer", nowait = true }
+)
 
 ---@type LazySpec
 return {}
