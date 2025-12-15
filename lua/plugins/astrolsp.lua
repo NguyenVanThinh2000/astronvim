@@ -43,6 +43,15 @@ return {
     ---@diagnostic disable: missing-fields
     config = {
       -- clangd = { capabilities = { offsetEncoding = "utf-8" } },
+      cssls = {
+        settings = {
+          css = {
+            lint = {
+              unknownAtRules = "ignore",
+            },
+          },
+        },
+      },
     },
     -- customize how language servers are attached
     handlers = {
@@ -104,10 +113,12 @@ return {
 
               if current_file == def_file and current_line == def_line then
                 -- At definition, show references
-                vim.lsp.buf.references(nil, {})
+                -- vim.lsp.buf.references(nil, {})
+                require("telescope.builtin").lsp_references()
               else
                 -- Not at definition, go to definition
-                vim.lsp.buf.definition()
+                -- vim.lsp.buf.definition()
+                require("telescope.builtin").lsp_definitions()
               end
             end)
           end,

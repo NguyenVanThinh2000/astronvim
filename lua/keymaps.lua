@@ -86,5 +86,8 @@ keymap.set(
   { desc = "Close buffer", nowait = true }
 )
 
+keymap.set("n", "gr", require("telescope.builtin").lsp_references, { desc = "LSP references" })
+keymap.set("n", "gd", require("telescope.builtin").lsp_definitions, { desc = "LSP definitions" })
+
 ---@type LazySpec
 return {}

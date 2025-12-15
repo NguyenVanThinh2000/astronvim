@@ -11,4 +11,5 @@ return {
   { import = "astrocommunity.editing-support.copilotchat-nvim" },
   { import = "astrocommunity.pack.tailwindcss" },
   { import = "astrocommunity.color.vim-highlighter" },
+  { import = "astrocommunity.colorscheme.catppuccin" },
 }
