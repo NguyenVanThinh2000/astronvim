@@ -18,45 +18,12 @@ return {
   specs = {
     { import = "astrocommunity.completion.copilot-lua" },
     {
-      "hrsh7th/nvim-cmp",
-      optional = true,
-      dependencies = { "zbirenbaum/copilot.lua" },
-      opts = function(_, opts)
-        local cmp, copilot = require "cmp", require "copilot.suggestion"
-        local snip_status_ok, luasnip = pcall(require, "luasnip")
-        if not snip_status_ok then return end
-
-        if not opts.mapping then opts.mapping = {} end
-        opts.mapping["<Tab>"] = cmp.mapping(function(fallback)
-          if copilot.is_visible() then
-            copilot.accept()
-          elseif cmp.visible() then
-            cmp.select_next_item()
-          elseif luasnip.expand_or_jumpable() then
-            luasnip.expand_or_jump()
-          elseif has_words_before() then
-            cmp.complete()
-          else
-            fallback()
-          end
-        end, { "i", "s" })
-
-        -- opts.mapping["<C-X>"] = cmp.mapping(copilot_action "next")
-        -- opts.mapping["<C-Z>"] = cmp.mapping(copilot_action "prev")
-        -- opts.mapping["<C-Right>"] = cmp.mapping(copilot_action "accept_word")
-        -- opts.mapping["<C-L>"] = cmp.mapping(copilot_action "accept_word")
-        -- opts.mapping["<C-Down>"] = cmp.mapping(copilot_action "accept_line")
-        -- opts.mapping["<C-J>"] = cmp.mapping(copilot_action "accept_line")
-        opts.mapping["<C-e>"] = cmp.mapping(copilot_action "dismiss")
-      end,
-    },
-    {
       "Saghen/blink.cmp",
       optional = true,
       opts = function(_, opts)
         if not opts.keymap then opts.keymap = {} end
 
-        opts.keymap["<Tab>"] = {
+        opts.keymap["<C-J>"] = {
           copilot_action "accept",
           "select_next",
           "snippet_forward",
