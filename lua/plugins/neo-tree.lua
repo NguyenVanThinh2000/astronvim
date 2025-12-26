@@ -11,7 +11,15 @@ return {
     lazy = false, -- neo-tree will lazily load itself
     opts = {
       close_if_last_window = false,
+      window = {
+        position = "left",
+        width = 50,
+      },
       filesystem = {
+        follow_current_file = {
+          enabled = true,
+          leave_dirs_open = true,
+        },
         filtered_items = {
           visible = false, -- when true, they will just be displayed differently than normal items
           hide_dotfiles = false,
