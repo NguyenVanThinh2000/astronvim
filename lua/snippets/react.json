@@ -1,0 +1,137 @@
+{
+  "log": {
+    "prefix": "clg",
+    "body": [
+      "console.log('${1:value}:' $1);"
+    ],
+    "description": "Console log"
+  },
+  "Creates a React Functional Component": {
+    "prefix": "rfc",
+    "body": [
+      "export type ${1:Component}Props = {",
+      "}",
+      "",
+      "export default function ${1:Component} ({}: ${1:Component}Props) {",
+      "  return (",
+      "    <>",
+      "      ${2:content}",
+      "    </>",
+      "  );",
+      "}",
+      ""
+    ],
+    "description": "Creates a React Functional Component"
+  },
+  "Creates a React Functional Component 2": {
+    "prefix": "rfce",
+    "body": [
+      "export type ${1:Component}Props = {",
+      "}",
+      "",
+      "function ${1:Component} ({}: ${1:Component}Props) {",
+      "  return (",
+      "    <>",
+      "      ${2:content}",
+      "    </>",
+      "  );",
+      "}",
+      "export default ${1:Component};",
+      ""
+    ],
+    "description": "Creates a React Functional Component"
+  },
+  "Creates a React Arrow Function Component": {
+    "prefix": "rafc",
+    "body": [
+      "export type ${1:Component}Props = {",
+      "}",
+      "",
+      "const ${1:Component} = ({}: ${1:Component}Props) => {",
+      "  return (",
+      "    <>",
+      "      ${2:content}",
+      "    </>",
+      "  );",
+      "};",
+      "",
+      "export default ${1:Component};",
+      ""
+    ],
+    "description": "Creates a React Arrow Function Component"
+  },
+  "forwardRef": {
+    "prefix": "rfrc",
+    "body": [
+      "import { type ComponentPropsWithoutRef, forwardRef } from \"react\";",
+      "",
+      "type ${2:${TM_FILENAME_BASE/(.*)/${1:/capitalize}/}}Props = {} & ComponentPropsWithoutRef<'${1:div}'>",
+      "const ${2:${TM_FILENAME_BASE/(.*)/${1:/capitalize}/}} = forwardRef<${3:HTMLDivElement},${2:${TM_FILENAME_BASE/(.*)/${1:/capitalize}/}}Props>(function ${2:${TM_FILENAME_BASE/(.*)/${1:/capitalize}/}}({},ref){",
+      "    return (",
+      "        <div ref={ref}>${4:content}</div>",
+      "    )",
+      "})",
+      "export default ${2:${TM_FILENAME_BASE/(.*)/${1:/capitalize}/}};",
+      "",
+      "",
+      ""
+    ],
+    "description": "forwardRef"
+  },
+  "Declare a new state variable using State Hook": {
+    "prefix": [
+      "usf",
+      "usestate"
+    ],
+    "body": [
+      "const [${1}, set${1/(.*)/${1:/capitalize}/}] = useState<$2>($3);"
+    ],
+    "description": "Declare a new state Variable using the State Hook."
+  },
+  "Declare a new ref variable using Ref Hook": {
+    "prefix": [
+      "usr",
+      "useref"
+    ],
+    "body": [
+      "const ${1} = useRef<$2>($3);"
+    ],
+    "description": "Declare a new ref Variable using the Ref Hook."
+  },
+  "useEffect": {
+    "prefix": [
+      "uef",
+      "useeffect"
+    ],
+    "body": [
+      "useEffect(() => {",
+      "\t$1",
+      "}, []);"
+    ],
+    "description": "useEffect Hook"
+  },
+  "useCallback": {
+    "prefix": [
+      "ucb",
+      "usecallback"
+    ],
+    "body": [
+      "const $1 = useCallback(() => {",
+      "\t$2",
+      "}, []);"
+    ],
+    "description": "useCallback Hook"
+  },
+  "useMemo": {
+    "prefix": [
+      "umemo",
+      "usememo"
+    ],
+    "body": [
+      "const $1 = useMemo(() => {",
+      "\treturn $2",
+      "}, []);"
+    ],
+    "description": "useMemo Hook"
+  }
+}

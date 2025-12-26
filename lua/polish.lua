@@ -1,5 +1,6 @@
-if true then return end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
--- This will run last in the setup process.
--- This is just pure lua so anything that doesn't
--- fit in the normal config locations above can go here
+local snippet_path = vim.fn.stdpath "config" .. "/lua/snippets"
+pcall(function()
+  require("luasnip.loaders.from_vscode").lazy_load {
+    paths = { snippet_path },
+  }
+end)
