@@ -89,5 +89,10 @@ keymap.set(
 keymap.set("n", "gr", require("telescope.builtin").lsp_references, { desc = "LSP references" })
 keymap.set("n", "gd", require("telescope.builtin").lsp_definitions, { desc = "LSP definitions" })
 
+-- tab management
+keymap.set("n", "tc", ":tabnew<CR>", opts) -- open new tab
+keymap.set("n", "tx", ":tabclose<CR>", opts) -- close current tab
+keymap.set("n", "tn", ":tabn<CR>", opts) -- go to next tab
+keymap.set("n", "tp", ":tabp<CR>", opts) -- go to previous tab
 ---@type LazySpec
 return {}
