@@ -1,9 +1,7 @@
 {
   "log": {
     "prefix": "clg",
-    "body": [
-      "console.log('${1:value}:' $1);"
-    ],
+    "body": ["console.log('${1:value}: ', $1);"],
     "description": "Console log"
   },
   "Creates a React Functional Component": {
@@ -79,59 +77,30 @@
     "description": "forwardRef"
   },
   "Declare a new state variable using State Hook": {
-    "prefix": [
-      "usf",
-      "usestate"
-    ],
+    "prefix": ["usf", "usestate"],
     "body": [
       "const [${1}, set${1/(.*)/${1:/capitalize}/}] = useState<$2>($3);"
     ],
     "description": "Declare a new state Variable using the State Hook."
   },
   "Declare a new ref variable using Ref Hook": {
-    "prefix": [
-      "usr",
-      "useref"
-    ],
-    "body": [
-      "const ${1} = useRef<$2>($3);"
-    ],
+    "prefix": ["usr", "useref"],
+    "body": ["const ${1} = useRef<$2>($3);"],
     "description": "Declare a new ref Variable using the Ref Hook."
   },
   "useEffect": {
-    "prefix": [
-      "uef",
-      "useeffect"
-    ],
-    "body": [
-      "useEffect(() => {",
-      "\t$1",
-      "}, []);"
-    ],
+    "prefix": ["uef", "useeffect"],
+    "body": ["useEffect(() => {", "\t$1", "}, []);"],
     "description": "useEffect Hook"
   },
   "useCallback": {
-    "prefix": [
-      "ucb",
-      "usecallback"
-    ],
-    "body": [
-      "const $1 = useCallback(() => {",
-      "\t$2",
-      "}, []);"
-    ],
+    "prefix": ["ucb", "usecallback"],
+    "body": ["const $1 = useCallback(() => {", "\t$2", "}, []);"],
     "description": "useCallback Hook"
   },
   "useMemo": {
-    "prefix": [
-      "umemo",
-      "usememo"
-    ],
-    "body": [
-      "const $1 = useMemo(() => {",
-      "\treturn $2",
-      "}, []);"
-    ],
+    "prefix": ["umemo", "usememo"],
+    "body": ["const $1 = useMemo(() => {", "\treturn $2", "}, []);"],
     "description": "useMemo Hook"
   }
 }
