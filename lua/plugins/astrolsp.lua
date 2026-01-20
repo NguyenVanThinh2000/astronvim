@@ -214,6 +214,26 @@ return {
 
       -- Attach navic for breadcrumb navigation
       if client.supports_method "textDocument/documentSymbol" then require("nvim-navic").attach(client, bufnr) end
+
+      if client.name == "biome" then
+        -- source.fixAll.biome using command line
+        vim.api.nvim_create_autocmd("BufWritePost", {
+          group = vim.api.nvim_create_augroup("biome_fix_all_" .. bufnr, { clear = true }),
+          buffer = bufnr,
+          callback = function()
+            local file = vim.fn.expand "%:p"
+            -- Run biome check with fix
+            local result = vim.fn.system { "biome", "check", "--fix", "--unsafe", file }
+            -- Only reload if biome made changes
+            if vim.v.shell_error == 0 and result:match("Fixed") then
+              -- Reload buffer silently
+              local view = vim.fn.winsaveview()
+              vim.cmd "edit!"
+              vim.fn.winrestview(view)
+            end
+          end,
+        })
+      end
     end,
   },
 }

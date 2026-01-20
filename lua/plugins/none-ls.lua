@@ -14,20 +14,28 @@ return {
     -- Auto-detect and register formatters based on project config
     local formatters = {}
 
-    -- Check if project uses Biome
-    if vim.fn.filereadable(vim.fn.getcwd() .. "/biome.json") == 1 then
-      table.insert(formatters, null_ls.builtins.formatting.biome)
-    end
+    -- Check if project uses Biome (supports biome.json, biome.jsonc)
+    table.insert(
+      formatters,
+      null_ls.builtins.formatting.biome.with {
+        condition = function(utils) return utils.root_has_file { "biome.json", "biome.jsonc" } end,
+      }
+    )
 
     -- Check if project uses Prettier
-    if
-      vim.fn.filereadable(vim.fn.getcwd() .. "/.prettierrc") == 1
-      or vim.fn.filereadable(vim.fn.getcwd() .. "/.prettierrc.json") == 1
-      or vim.fn.filereadable(vim.fn.getcwd() .. "/.prettierrc.js") == 1
-      or vim.fn.filereadable(vim.fn.getcwd() .. "/prettier.config.js") == 1
-    then
-      table.insert(formatters, null_ls.builtins.formatting.prettier)
-    end
+    table.insert(
+      formatters,
+      null_ls.builtins.formatting.prettier.with {
+        condition = function(utils)
+          return utils.root_has_file {
+            ".prettierrc",
+            ".prettierrc.json",
+            ".prettierrc.js",
+            "prettier.config.js",
+          }
+        end,
+      }
+    )
 
     -- Only insert new sources, do not replace the existing ones
     -- (If you wish to replace, use `opts.sources = {}` instead of the `list_insert_unique` function)
