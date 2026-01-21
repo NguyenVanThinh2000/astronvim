@@ -48,10 +48,15 @@ keymap.set("n", "<A-S-j>", "yyp", opts)
 keymap.set("v", "<A-S-j>", "yP", opts)
 
 -- Move lines and group lines up, down for windows
-keymap.set("n", "<A-k>", ":m .-2<cr>", opts)
-keymap.set("n", "<A-j>", ":m .+1<cr>", opts)
-keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", opts)
-keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", opts)
+-- keymap.set("n", "<A-k>", ":m .-2<cr>", opts)
+-- keymap.set("n", "<A-j>", ":m .+1<cr>", opts)
+-- keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { silent = true })
+-- keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { silent = true })
+--
+-- keymap.set("n", "<A-up>", ":m .-2<cr>", opts)
+-- keymap.set("n", "<A-down>", ":m .+1<cr>", opts)
+-- keymap.set("v", "<A-down>", ":m '>+1<CR>gv=gv", { silent = true })
+-- keymap.set("v", "<A-up>", ":m '<-2<CR>gv=gv", { silent = true })
 
 -- move quickly up and down
 keymap.set("n", "<S-j>", ":+5<cr>", opts)
