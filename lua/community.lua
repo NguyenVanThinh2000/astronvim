@@ -8,8 +8,10 @@ return {
   { import = "astrocommunity.pack.lua" },
   { import = "astrocommunity.fuzzy-finder.telescope-nvim" },
   { import = "astrocommunity.motion.nvim-surround" },
-  { import = "astrocommunity.editing-support.copilotchat-nvim" },
+  -- { import = "astrocommunity.editing-support.copilotchat-nvim" },
   { import = "astrocommunity.pack.tailwindcss" },
   { import = "astrocommunity.color.vim-highlighter" },
   { import = "astrocommunity.colorscheme.catppuccin" },
+  { import = "astrocommunity.split-and-window.neominimap-nvim" },
+  -- { import = "astrocommunity.pack.biome" },
 }

@@ -215,7 +215,16 @@ return {
       -- Attach navic for breadcrumb navigation
       if client.supports_method "textDocument/documentSymbol" then require("nvim-navic").attach(client, bufnr) end
 
-      if client.name == "biome" then
+      local has_biome_config = vim.fn.filereadable(vim.fn.getcwd() .. "/biome.json") == 1
+        or vim.fn.filereadable(vim.fn.getcwd() .. "/biome.jsonc") == 1
+      local has_dprint_config = vim.fn.filereadable(vim.fn.getcwd() .. "/dprint.json") == 1
+        or vim.fn.filereadable(vim.fn.getcwd() .. "/dprint.jsonc") == 1
+      local has_prettier_config = vim.fn.filereadable(vim.fn.getcwd() .. "/.prettierrc") == 1
+        or vim.fn.filereadable(vim.fn.getcwd() .. "/.prettierrc.json") == 1
+        or vim.fn.filereadable(vim.fn.getcwd() .. "/.prettierrc.js") == 1
+        or vim.fn.filereadable(vim.fn.getcwd() .. "/prettier.config.js") == 1
+
+      if has_biome_config then
         -- source.fixAll.biome using command line
         vim.api.nvim_create_autocmd("BufWritePost", {
           group = vim.api.nvim_create_augroup("biome_fix_all_" .. bufnr, { clear = true }),
@@ -225,7 +234,43 @@ return {
             -- Run biome check with fix
             local result = vim.fn.system { "biome", "check", "--fix", "--unsafe", file }
             -- Only reload if biome made changes
-            if vim.v.shell_error == 0 and result:match("Fixed") then
+            if vim.v.shell_error == 0 and result:match "Fixed" then
+              -- Reload buffer silently
+              local view = vim.fn.winsaveview()
+              vim.cmd "edit!"
+              vim.fn.winrestview(view)
+            end
+          end,
+        })
+      elseif has_dprint_config then
+        -- source dprint format on save using command line
+        vim.api.nvim_create_autocmd("BufWritePost", {
+          group = vim.api.nvim_create_augroup("dprint_format_" .. bufnr, { clear = true }),
+          buffer = bufnr,
+          callback = function()
+            local file = vim.fn.expand "%:p"
+            -- Run dprint format
+            vim.fn.system { "dprint", "fmt", file }
+            -- Only reload if dprint made changes
+            if vim.v.shell_error == 0 then
+              -- Reload buffer silently
+              local view = vim.fn.winsaveview()
+              vim.cmd "edit!"
+              vim.fn.winrestview(view)
+            end
+          end,
+        })
+      elseif has_prettier_config then
+        -- source prettier format on save using command line
+        vim.api.nvim_create_autocmd("BufWritePost", {
+          group = vim.api.nvim_create_augroup("prettier_format_" .. bufnr, { clear = true }),
+          buffer = bufnr,
+          callback = function()
+            local file = vim.fn.expand "%:p"
+            -- Run prettier format
+            vim.fn.system { "prettier", "--write", file }
+            -- Only reload if prettier made changes
+            if vim.v.shell_error == 0 then
               -- Reload buffer silently
               local view = vim.fn.winsaveview()
               vim.cmd "edit!"

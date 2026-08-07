@@ -17,6 +17,7 @@ return {
         "stylua",
         "prettier",
         "biome",
+        "dprint",
 
         -- install debuggers
         -- "debugpy",
@@ -24,6 +25,7 @@ return {
         -- install any other package
         "tree-sitter-cli",
         "eslint_d",
+        "oxlint",
       },
     },
   },
