@@ -21,6 +21,18 @@ return {
           init_options = {
             hostInfo = "neovim",
           },
+          settings = {
+            typescript = {
+              diagnostics = {
+                ignoredCodes = { 6133, 6134 },
+              },
+            },
+            javascript = {
+              diagnostics = {
+                ignoredCodes = { 6133, 6134 },
+              },
+            },
+          },
         },
       }
     end

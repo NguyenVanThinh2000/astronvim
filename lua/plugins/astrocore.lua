@@ -21,6 +21,7 @@ return {
     diagnostics = {
       virtual_text = true,
       underline = true,
+      update_in_insert = false, -- Cập nhật báo lỗi ngay khi vừa gõ xong / thoát Insert mode (InsertLeave)
     },
     -- passed to `vim.filetype.add`
     filetypes = {

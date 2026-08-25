@@ -13,5 +13,5 @@ return {
   { import = "astrocommunity.color.vim-highlighter" },
   { import = "astrocommunity.colorscheme.catppuccin" },
   { import = "astrocommunity.split-and-window.neominimap-nvim" },
-  -- { import = "astrocommunity.pack.biome" },
+  { import = "astrocommunity.pack.biome" },
 }

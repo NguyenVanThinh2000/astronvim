@@ -1,49 +1,32 @@
 ---@diagnostic disable: param-type-mismatch, missing-parameter
--- AstroLSP allows you to customize the features in AstroNvim's LSP configuration engine
--- Configuration documentation can be found with `:h astrolsp`
--- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
---       as this provides autocomplete and documentation while editing
-
 ---@type LazySpec
 return {
   "AstroNvim/astrolsp",
   ---@type AstroLSPOpts
   opts = {
-    -- Configuration table of features provided by AstroLSP
     features = {
-      codelens = true, -- enable/disable codelens refresh on start
-      inlay_hints = false, -- enable/disable inlay hints on start
-      semantic_tokens = true, -- enable/disable semantic token highlighting
+      codelens = true,
+      inlay_hints = false,
+      semantic_tokens = true,
     },
-    -- customize lsp formatting options
     formatting = {
-      -- control auto formatting on save
       format_on_save = {
-        enabled = true, -- enable or disable format on save globally
-        allow_filetypes = { -- enable format on save for specified filetypes only
-          -- "go",
-        },
-        ignore_filetypes = { -- disable format on save for specified filetypes
-          -- "python",
-        },
+        enabled = true,
+        allow_filetypes = {},
+        ignore_filetypes = {},
       },
-      disabled = { -- disable formatting capabilities for the listed language servers
-        -- disable lua_ls formatting capability if you want to use StyLua to format your lua code
-        -- "lua_ls",
+      disabled = {
+        -- Tắt format từ ESLint LSP để tránh xung đột với dprint/biome/prettier
+        "eslint",
       },
-      timeout_ms = 1000, -- default format timeout
-      -- filter = function(client) -- fully override the default formatting function
-      --   return true
-      -- end
+      timeout_ms = 1000,
     },
-    -- enable servers that you already have installed without mason
     servers = {
-      -- "pyright"
+      "vtsls", -- Bật TypeScript LSP (vtsls)
+      "biome", -- Bật Biome LSP để soi và báo lỗi theo biome.json
     },
-    -- customize language server configuration options passed to `lspconfig`
     ---@diagnostic disable: missing-fields
     config = {
-      -- clangd = { capabilities = { offsetEncoding = "utf-8" } },
       cssls = {
         settings = {
           css = {
@@ -53,31 +36,29 @@ return {
           },
         },
       },
+      vtsls = {
+        settings = {
+          typescript = {
+            diagnostics = {
+              ignoredCodes = { 6133, 6134 },
+            },
+          },
+          javascript = {
+            diagnostics = {
+              ignoredCodes = { 6133, 6134 },
+            },
+          },
+        },
+      },
     },
-    -- customize how language servers are attached
     handlers = {
-      -- a function without a key is simply the default handler, functions take two parameters, the server name and the configured options table for that server
-      -- function(server, opts) require("lspconfig")[server].setup(opts) end
-
-      -- the key is the server that is being setup with `lspconfig`
-      -- rust_analyzer = false, -- setting a handler to false will disable the set up of that language server
-      -- pyright = function(_, opts) require("lspconfig").pyright.setup(opts) end -- or a custom handler function can be passed
+      -- eslint = false,
     },
-    -- Configure buffer local auto commands to add when attaching a language server
     autocmds = {
-      -- first key is the `augroup` to add the auto commands to (:h augroup)
       lsp_codelens_refresh = {
-        -- Optional condition to create/delete auto command group
-        -- can either be a string of a client capability or a function of `fun(client, bufnr): boolean`
-        -- condition will be resolved for each client on each execution and if it ever fails for all clients,
-        -- the auto commands will be deleted for that buffer
         cond = "textDocument/codeLens",
-        -- cond = function(client, bufnr) return client.name == "lua_ls" end,
-        -- list of auto commands to set
         {
-          -- events to trigger
           event = { "InsertLeave", "BufEnter" },
-          -- the rest of the autocmd options (:h nvim_create_autocmd)
           desc = "Refresh codelens (buffer)",
           callback = function(args)
             if require("astrolsp").config.features.codelens then vim.lsp.codelens.refresh { bufnr = args.buf } end
@@ -85,7 +66,6 @@ return {
         },
       },
     },
-    -- mappings to be set up on attaching of a language server
     mappings = {
       n = {
         gl = {
@@ -98,27 +78,20 @@ return {
             vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result, _, _)
               if err then return end
               if not result or vim.tbl_isempty(result) then
-                -- No definition found
                 vim.notify("No definition found", vim.log.levels.INFO)
                 vim.lsp.buf.references(nil, {})
                 return
               end
 
-              -- Get current position
               local current_file = vim.fn.expand "%:p"
               local current_line = vim.fn.line "."
-              -- Get definition position
               local def = result[1]
               local def_file = vim.uri_to_fname(def.targetUri)
               local def_line = def.targetSelectionRange.start.line + 1
 
               if current_file == def_file and current_line == def_line then
-                -- At definition, show references
-                -- vim.lsp.buf.references(nil, {})
                 require("telescope.builtin").lsp_references()
               else
-                -- Not at definition, go to definition
-                -- vim.lsp.buf.definition()
                 require("telescope.builtin").lsp_definitions()
               end
             end)
@@ -131,6 +104,7 @@ return {
           desc = "LSP code action",
           cond = "textDocument/codeAction",
         },
+
         ["<Leader>ri"] = {
           function()
             local ok, vtsls = pcall(require, "vtsls")
@@ -192,7 +166,7 @@ return {
               vim.notify("vtsls plugin not loaded", vim.log.levels.WARN)
             end
           end,
-          desc = "Remove unused (vtsls)",
+          desc = "Add missing imports (vtsls)",
           cond = function(client) return client.name == "vtsls" end,
         },
         ["<Leader>uY"] = {
@@ -204,81 +178,11 @@ return {
         },
       },
     },
-    -- A custom `on_attach` function to be run after the default `on_attach` function
-    -- takes two parameters `client` and `bufnr`  (`:h lspconfig-setup`)
     on_attach = function(client, bufnr)
-      local opts = { noremap = true, silent = true }
-      -- this would disable semanticTokensProvider for all clients
-      -- client.server_capabilities.semanticTokensProvider = nil
-      vim.api.nvim_buf_set_keymap(bufnr, "n", "gk", "<Cmd>lua vim.lsp.buf.hover()<CR>", opts)
+      local keymap_opts = { noremap = true, silent = true }
+      vim.api.nvim_buf_set_keymap(bufnr, "n", "gk", "<Cmd>lua vim.lsp.buf.hover()<CR>", keymap_opts)
 
-      -- Attach navic for breadcrumb navigation
       if client.supports_method "textDocument/documentSymbol" then require("nvim-navic").attach(client, bufnr) end
-
-      local has_biome_config = vim.fn.filereadable(vim.fn.getcwd() .. "/biome.json") == 1
-        or vim.fn.filereadable(vim.fn.getcwd() .. "/biome.jsonc") == 1
-      local has_dprint_config = vim.fn.filereadable(vim.fn.getcwd() .. "/dprint.json") == 1
-        or vim.fn.filereadable(vim.fn.getcwd() .. "/dprint.jsonc") == 1
-      local has_prettier_config = vim.fn.filereadable(vim.fn.getcwd() .. "/.prettierrc") == 1
-        or vim.fn.filereadable(vim.fn.getcwd() .. "/.prettierrc.json") == 1
-        or vim.fn.filereadable(vim.fn.getcwd() .. "/.prettierrc.js") == 1
-        or vim.fn.filereadable(vim.fn.getcwd() .. "/prettier.config.js") == 1
-
-      if has_biome_config then
-        -- source.fixAll.biome using command line
-        vim.api.nvim_create_autocmd("BufWritePost", {
-          group = vim.api.nvim_create_augroup("biome_fix_all_" .. bufnr, { clear = true }),
-          buffer = bufnr,
-          callback = function()
-            local file = vim.fn.expand "%:p"
-            -- Run biome check with fix
-            local result = vim.fn.system { "biome", "check", "--fix", "--unsafe", file }
-            -- Only reload if biome made changes
-            if vim.v.shell_error == 0 and result:match "Fixed" then
-              -- Reload buffer silently
-              local view = vim.fn.winsaveview()
-              vim.cmd "edit!"
-              vim.fn.winrestview(view)
-            end
-          end,
-        })
-      elseif has_dprint_config then
-        -- source dprint format on save using command line
-        vim.api.nvim_create_autocmd("BufWritePost", {
-          group = vim.api.nvim_create_augroup("dprint_format_" .. bufnr, { clear = true }),
-          buffer = bufnr,
-          callback = function()
-            local file = vim.fn.expand "%:p"
-            -- Run dprint format
-            vim.fn.system { "dprint", "fmt", file }
-            -- Only reload if dprint made changes
-            if vim.v.shell_error == 0 then
-              -- Reload buffer silently
-              local view = vim.fn.winsaveview()
-              vim.cmd "edit!"
-              vim.fn.winrestview(view)
-            end
-          end,
-        })
-      elseif has_prettier_config then
-        -- source prettier format on save using command line
-        vim.api.nvim_create_autocmd("BufWritePost", {
-          group = vim.api.nvim_create_augroup("prettier_format_" .. bufnr, { clear = true }),
-          buffer = bufnr,
-          callback = function()
-            local file = vim.fn.expand "%:p"
-            -- Run prettier format
-            vim.fn.system { "prettier", "--write", file }
-            -- Only reload if prettier made changes
-            if vim.v.shell_error == 0 then
-              -- Reload buffer silently
-              local view = vim.fn.winsaveview()
-              vim.cmd "edit!"
-              vim.fn.winrestview(view)
-            end
-          end,
-        })
-      end
     end,
   },
 }
