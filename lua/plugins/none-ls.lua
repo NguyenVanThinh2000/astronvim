@@ -1,3 +1,28 @@
+local cache_file = vim.fn.stdpath "cache" .. "/none_ls_sources_cache.json"
+
+local function load_disk_cache()
+  local f = io.open(cache_file, "r")
+  if not f then return {} end
+  local content = f:read "*a"
+  f:close()
+  if not content or content == "" then return {} end
+  local ok, res = pcall(vim.json.decode, content)
+  return (ok and type(res) == "table") and res or {}
+end
+
+local disk_cache = load_disk_cache()
+
+local function save_disk_cache()
+  local ok, encoded = pcall(vim.json.encode, disk_cache)
+  if ok then
+    local f = io.open(cache_file, "w")
+    if f then
+      f:write(encoded)
+      f:close()
+    end
+  end
+end
+
 ---@type LazySpec
 return {
   "nvimtools/none-ls.nvim",
@@ -29,43 +54,59 @@ return {
       "typescriptreact",
       "json",
       "jsonc",
+      "css",
+      "scss",
     }
 
-    local root_dir = vim.fn.getcwd()
-
-    local function get_root_package_json_str()
-      local pkg_path = root_dir .. "/package.json"
-      if vim.fn.filereadable(pkg_path) == 1 then
-        local lines = vim.fn.readfile(pkg_path)
-        return table.concat(lines, "\n")
-      end
-      return nil
-    end
-
-    local pkg_content = get_root_package_json_str()
-
-    local function has_root_config(filenames, keywords)
+    local function check_root_config(filenames, keywords)
+      local dir = vim.fn.getcwd()
       if filenames then
         for _, file in ipairs(filenames) do
-          if vim.fn.filereadable(root_dir .. "/" .. file) == 1 then return true end
+          if vim.fn.filereadable(dir .. "/" .. file) == 1 then return true end
         end
       end
 
-      if pkg_content and keywords then
-        for _, kw in ipairs(keywords) do
-          if pkg_content:find(kw, 1, true) then return true end
+      if keywords then
+        local pkg_path = dir .. "/package.json"
+        if vim.fn.filereadable(pkg_path) == 1 then
+          local lines = vim.fn.readfile(pkg_path)
+          local pkg_content = table.concat(lines, "\n")
+          for _, kw in ipairs(keywords) do
+            if pkg_content:find(kw, 1, true) then return true end
+          end
         end
       end
 
       return false
     end
 
+    local function is_source_enabled(source_name, filenames, keywords)
+      local dir = vim.fn.getcwd()
+
+      if disk_cache[dir] and disk_cache[dir][source_name] ~= nil then return disk_cache[dir][source_name] end
+
+      local enabled = check_root_config(filenames, keywords)
+
+      if not disk_cache[dir] then disk_cache[dir] = {} end
+      disk_cache[dir][source_name] = enabled
+      save_disk_cache()
+
+      return enabled
+    end
+
+    vim.api.nvim_create_user_command("NoneLsRefresh", function()
+      local dir = vim.fn.getcwd()
+      disk_cache[dir] = nil
+      save_disk_cache()
+      vim.notify("refresh config: " .. dir, vim.log.levels.INFO)
+    end, { desc = "Rescan none-ls config for current project" })
+
     -- 1. Custom Biome Formatter
     local custom_biome_formatter = {
       name = "biome",
       method = null_ls.methods.FORMATTING,
       filetypes = filetypes,
-      condition = function() return has_root_config({ "biome.json", "biome.jsonc" }, { "biome" }) end,
+      condition = function() return is_source_enabled("biome", { "biome.json", "biome.jsonc" }, { "biome" }) end,
       generator = helpers.formatter_factory {
         command = "biome",
         args = { "check", "--write", "--stdin-file-path=$FILENAME" },
@@ -79,7 +120,7 @@ return {
       method = null_ls.methods.DIAGNOSTICS,
       filetypes = filetypes,
       condition = function()
-        return has_root_config({
+        return is_source_enabled("oxlint", {
           ".oxlintrc",
           ".oxlintrc.json",
           "oxlint.json",
@@ -114,7 +155,9 @@ return {
       name = "dprint",
       method = null_ls.methods.FORMATTING,
       filetypes = filetypes,
-      condition = function() return has_root_config({ "dprint.json", ".dprint.json", "dprint.jsonc" }, { "dprint" }) end,
+      condition = function()
+        return is_source_enabled("dprint", { "dprint.json", ".dprint.json", "dprint.jsonc" }, { "dprint" })
+      end,
       generator = helpers.formatter_factory {
         command = "dprint",
         args = { "fmt", "--stdin", "$FILENAME" },
@@ -126,7 +169,7 @@ return {
     local prettier_formatter = null_ls.builtins.formatting.prettier
       and null_ls.builtins.formatting.prettier.with {
         condition = function()
-          return has_root_config({
+          return is_source_enabled("prettier", {
             ".prettierrc",
             ".prettierrc.json",
             ".prettierrc.yml",
@@ -149,7 +192,7 @@ return {
       and eslint_mod.with {
         filetypes = filetypes,
         condition = function()
-          return has_root_config({
+          local enabled = is_source_enabled("eslint", {
             "eslint.config.js",
             "eslint.config.mjs",
             "eslint.config.cjs",
@@ -163,10 +206,44 @@ return {
             ".eslintrc.yml",
             ".eslintrc.json",
           }, { "eslintConfig" })
+          return enabled
         end,
         on_output = function(params)
-          if type(params.output) ~= "string" then return eslint_mod._opts.on_output(params) end
-          return {}
+          local raw = params.output
+          local data = nil
+
+          if type(raw) == "table" then
+            data = raw
+          elseif type(raw) == "string" then
+            local json_start = raw:find "%[%s*{"
+            if json_start then
+              local json_str = raw:sub(json_start)
+              local ok, decoded = pcall(vim.json.decode, json_str)
+              if ok and type(decoded) == "table" then data = decoded end
+            end
+          end
+
+          if not data then return {} end
+
+          local diagnostics = {}
+          for _, file_res in ipairs(data) do
+            if type(file_res) == "table" and file_res.messages then
+              for _, m in ipairs(file_res.messages) do
+                if m.line and m.column and m.message then
+                  table.insert(diagnostics, {
+                    row = m.line,
+                    col = m.column,
+                    end_row = m.endLine or m.line,
+                    end_col = m.endColumn or m.column,
+                    message = m.message .. (m.ruleId and (" [" .. m.ruleId .. "]") or ""),
+                    severity = m.severity == 1 and vim.diagnostic.severity.WARN or vim.diagnostic.severity.ERROR,
+                  })
+                end
+              end
+            end
+          end
+
+          return diagnostics
         end,
       }
 
