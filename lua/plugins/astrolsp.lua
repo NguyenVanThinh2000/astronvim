@@ -37,17 +37,8 @@ return {
         },
       },
       vtsls = {
-        settings = {
-          typescript = {
-            diagnostics = {
-              ignoredCodes = { 6133, 6134 },
-            },
-          },
-          javascript = {
-            diagnostics = {
-              ignoredCodes = { 6133, 6134 },
-            },
-          },
+        handlers = {
+          ["textDocument/publishDiagnostics"] = function() end,
         },
       },
     },
@@ -178,11 +169,7 @@ return {
         },
       },
     },
-    on_attach = function(client, bufnr)
-      local keymap_opts = { noremap = true, silent = true }
-      vim.api.nvim_buf_set_keymap(bufnr, "n", "gk", "<Cmd>lua vim.lsp.buf.hover()<CR>", keymap_opts)
-
-      if client.supports_method "textDocument/documentSymbol" then require("nvim-navic").attach(client, bufnr) end
-    end,
+    -- on_attach = function(client, bufnr)
+    -- end,
   },
 }
