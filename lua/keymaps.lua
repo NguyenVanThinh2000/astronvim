@@ -99,5 +99,26 @@ keymap.set("n", "tc", ":tabnew<CR>", opts) -- open new tab
 keymap.set("n", "tx", ":tabclose<CR>", opts) -- close current tab
 keymap.set("n", "tn", ":tabn<CR>", opts) -- go to next tab
 keymap.set("n", "tp", ":tabp<CR>", opts) -- go to previous tab
+-- Smart log: insert a log statement for the word under cursor, based on filetype
+keymap.set("n", "<A-S-p>", function() -- F13 = Super+l on many terminals; change if needed
+  local word = vim.fn.expand "<cword>"
+  local ft = vim.bo.filetype
+  local log_map = {
+    typescript = string.format('console.log("%s:", %s);', word, word),
+    typescriptreact = string.format('console.log("%s:", %s);', word, word),
+    javascript = string.format('console.log("%s:", %s);', word, word),
+    javascriptreact = string.format('console.log("%s:", %s);', word, word),
+    lua = string.format('vim.notify("%s: " .. vim.inspect(%s))', word, word),
+  }
+  local statement = log_map[ft]
+  if statement then
+    -- insert on next line and enter insert mode at end
+    vim.cmd "normal! o"
+    vim.api.nvim_put({ statement }, "c", true, true)
+  else
+    vim.notify("No log mapping for filetype: " .. ft, vim.log.levels.WARN)
+  end
+end, { desc = "Insert smart log statement", noremap = true, silent = true })
+
 ---@type LazySpec
 return {}
