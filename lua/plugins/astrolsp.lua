@@ -17,13 +17,13 @@ return {
       },
       disabled = {
         -- Tắt format từ ESLint LSP để tránh xung đột với dprint/biome/prettier
-        "eslint",
+        -- "eslint",
       },
       timeout_ms = 1000,
     },
     servers = {
-      "vtsls", -- Bật TypeScript LSP (vtsls)
-      "biome", -- Bật Biome LSP để soi và báo lỗi theo biome.json
+      "vtsls",
+      "biome",
     },
     ---@diagnostic disable: missing-fields
     config = {

@@ -35,8 +35,8 @@ return {
         opts.handlers.dprint = function() end
         opts.handlers.prettier = function() end
         opts.handlers.oxlint = function() end
-        opts.handlers.eslint_d = function() end
-        opts.handlers.eslint = function() end
+        -- opts.handlers.eslint_d = function() end
+        -- opts.handlers.eslint = function() end
         return opts
       end,
     },
@@ -102,11 +102,12 @@ return {
     end, { desc = "Rescan none-ls config for current project" })
 
     -- 1. Custom Biome Formatter
+    local has_biome_config = is_source_enabled("biome", { "biome.json", "biome.jsonc" }, { "biome" })
     local custom_biome_formatter = {
       name = "biome",
       method = null_ls.methods.FORMATTING,
       filetypes = filetypes,
-      condition = function() return is_source_enabled("biome", { "biome.json", "biome.jsonc" }, { "biome" }) end,
+      condition = function() return has_biome_config end,
       generator = helpers.formatter_factory {
         command = "biome",
         args = { "check", "--write", "--stdin-file-path=$FILENAME" },
@@ -187,72 +188,72 @@ return {
       }
 
     -- 5. ESLint_d
-    local ok_eslint, eslint_mod = pcall(require, "none-ls.diagnostics.eslint_d")
-    local eslint_diagnostics = ok_eslint
-      and eslint_mod.with {
-        filetypes = filetypes,
-        condition = function()
-          local enabled = is_source_enabled("eslint", {
-            "eslint.config.js",
-            "eslint.config.mjs",
-            "eslint.config.cjs",
-            "eslint.config.ts",
-            "eslint.config.mts",
-            "eslint.config.cts",
-            ".eslintrc",
-            ".eslintrc.js",
-            ".eslintrc.cjs",
-            ".eslintrc.yaml",
-            ".eslintrc.yml",
-            ".eslintrc.json",
-          }, { "eslintConfig" })
-          return enabled
-        end,
-        on_output = function(params)
-          local raw = params.output
-          local data = nil
-
-          if type(raw) == "table" then
-            data = raw
-          elseif type(raw) == "string" then
-            local json_start = raw:find "%[%s*{"
-            if json_start then
-              local json_str = raw:sub(json_start)
-              local ok, decoded = pcall(vim.json.decode, json_str)
-              if ok and type(decoded) == "table" then data = decoded end
-            end
-          end
-
-          if not data then return {} end
-
-          local diagnostics = {}
-          for _, file_res in ipairs(data) do
-            if type(file_res) == "table" and file_res.messages then
-              for _, m in ipairs(file_res.messages) do
-                if m.line and m.column and m.message then
-                  table.insert(diagnostics, {
-                    row = m.line,
-                    col = m.column,
-                    end_row = m.endLine or m.line,
-                    end_col = m.endColumn or m.column,
-                    message = m.message .. (m.ruleId and (" [" .. m.ruleId .. "]") or ""),
-                    severity = m.severity == 1 and vim.diagnostic.severity.WARN or vim.diagnostic.severity.ERROR,
-                  })
-                end
-              end
-            end
-          end
-
-          return diagnostics
-        end,
-      }
+    -- local ok_eslint, eslint_mod = pcall(require, "none-ls.diagnostics.eslint_d")
+    -- local eslint_diagnostics = ok_eslint
+    --   and eslint_mod.with {
+    --     filetypes = filetypes,
+    --     condition = function()
+    --       local enabled = is_source_enabled("eslint", {
+    --         "eslint.config.js",
+    --         "eslint.config.mjs",
+    --         "eslint.config.cjs",
+    --         "eslint.config.ts",
+    --         "eslint.config.mts",
+    --         "eslint.config.cts",
+    --         ".eslintrc",
+    --         ".eslintrc.js",
+    --         ".eslintrc.cjs",
+    --         ".eslintrc.yaml",
+    --         ".eslintrc.yml",
+    --         ".eslintrc.json",
+    --       }, { "eslintConfig" })
+    --       return enabled
+    --     end,
+    --     on_output = function(params)
+    --       local raw = params.output
+    --       local data = nil
+    --
+    --       if type(raw) == "table" then
+    --         data = raw
+    --       elseif type(raw) == "string" then
+    --         local json_start = raw:find "%[%s*{"
+    --         if json_start then
+    --           local json_str = raw:sub(json_start)
+    --           local ok, decoded = pcall(vim.json.decode, json_str)
+    --           if ok and type(decoded) == "table" then data = decoded end
+    --         end
+    --       end
+    --
+    --       if not data then return {} end
+    --
+    --       local diagnostics = {}
+    --       for _, file_res in ipairs(data) do
+    --         if type(file_res) == "table" and file_res.messages then
+    --           for _, m in ipairs(file_res.messages) do
+    --             if m.line and m.column and m.message then
+    --               table.insert(diagnostics, {
+    --                 row = m.line,
+    --                 col = m.column,
+    --                 end_row = m.endLine or m.line,
+    --                 end_col = m.endColumn or m.column,
+    --                 message = m.message .. (m.ruleId and (" [" .. m.ruleId .. "]") or ""),
+    --                 severity = m.severity == 1 and vim.diagnostic.severity.WARN or vim.diagnostic.severity.ERROR,
+    --               })
+    --             end
+    --           end
+    --         end
+    --       end
+    --
+    --       return diagnostics
+    --     end,
+    --   }
 
     local sources = {}
     if custom_biome_formatter then table.insert(sources, custom_biome_formatter) end
     if custom_oxlint then table.insert(sources, custom_oxlint) end
     if custom_dprint then table.insert(sources, custom_dprint) end
     if prettier_formatter then table.insert(sources, prettier_formatter) end
-    if eslint_diagnostics then table.insert(sources, eslint_diagnostics) end
+    -- if eslint_diagnostics then table.insert(sources, eslint_diagnostics) end
 
     opts.sources = require("astrocore").list_insert_unique(opts.sources, sources)
     return opts

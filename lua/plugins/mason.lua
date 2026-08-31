@@ -16,7 +16,6 @@ return {
         -- install formatters
         "stylua",
         "prettier",
-        "biome",
         "dprint",
 
         -- install debuggers
@@ -24,8 +23,8 @@ return {
 
         -- install any other package
         "tree-sitter-cli",
-        "eslint_d",
-        "oxlint",
+        -- "eslint_d",
+        -- "oxlint",
       },
     },
   },
