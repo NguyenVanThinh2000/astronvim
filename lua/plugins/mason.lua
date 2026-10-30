@@ -16,7 +16,7 @@ return {
         -- install formatters
         "stylua",
         "prettier",
-        "dprint",
+        -- "dprint",
 
         -- install debuggers
         -- "debugpy",

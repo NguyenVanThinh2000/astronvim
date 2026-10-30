@@ -152,17 +152,25 @@ return {
     }
 
     -- 3. Custom Dprint
+    local dprint_configs = { "dprint.json", ".dprint.json", "dprint.jsonc", ".dprint.jsonc" }
+    local function find_dprint_config(params)
+      local start = params.bufname ~= "" and vim.fs.dirname(params.bufname) or vim.fn.getcwd()
+      return vim.fs.find(dprint_configs, { path = start, upward = true })[1]
+    end
+
     local custom_dprint = {
       name = "dprint",
       method = null_ls.methods.FORMATTING,
       filetypes = filetypes,
-      condition = function()
-        return is_source_enabled("dprint", { "dprint.json", ".dprint.json", "dprint.jsonc" }, { "dprint" })
-      end,
       generator = helpers.formatter_factory {
         command = "dprint",
         args = { "fmt", "--stdin", "$FILENAME" },
         to_stdin = true,
+        runtime_condition = function(params) return find_dprint_config(params) ~= nil end,
+        cwd = function(params)
+          local config = find_dprint_config(params)
+          return config and vim.fs.dirname(config) or nil
+        end,
       },
     }
 

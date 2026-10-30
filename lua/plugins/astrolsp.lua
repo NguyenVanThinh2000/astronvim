@@ -44,6 +44,7 @@ return {
     },
     handlers = {
       -- eslint = false,
+      dprint = false, -- dprint chạy qua none-ls (có kiểm tra dprint.json), không bật dprint LSP
     },
     autocmds = {
       lsp_codelens_refresh = {
